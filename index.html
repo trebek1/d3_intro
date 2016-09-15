@@ -18,10 +18,6 @@ var margin = {
 	left: 80, 
 	right: 20
 }
-var width = w - margin.left - margin.right; 
-var height = h - margin.top - margin.bottom; 
-
-var data = [132,71,337,93,78,43,20,16,30,8,17,21];
 
 var data2 = [
 	
@@ -40,17 +36,37 @@ var data2 = [
 
 ];
 
-var x = d3.scale.linear() // determines width of bar 
+var width = w - margin.left - margin.right; 
+var height = h - margin.top - margin.bottom;
+
+
+var x = d3.scale.ordinal() // determines height of bar 
+	.domain(data2.map(function(entry){
+		return entry.key; 
+	})) 
+	.rangeBands([0,width]); 
+
+var y = d3.scale.linear() // determines width of bar 
 	.domain([0,d3.max(data2, function(d){
 		return d.value; 
 	})]) // domain is values you are mapping 
-	.range([0,width]); // range is final range 
+	.range([height,0]); // range is final range 
 
-var y = d3.scale.ordinal() // determines height of bar 
-	.domain(data2.map(function(entry){
-		return entry.key; 
-	})) // how many bars 
-	.rangeBands([0,height]);
+
+
+var data = [132,71,337,93,78,43,20,16,30,8,17,21];
+
+// var x = d3.scale.linear() // determines width of bar 
+// 	.domain([0,d3.max(data2, function(d){
+// 		return d.value; 
+// 	})]) // domain is values you are mapping 
+// 	.range([0,width]); // range is final range 
+
+// var y = d3.scale.ordinal() // determines height of bar 
+// 	.domain(data2.map(function(entry){
+// 		return entry.key; 
+// 	})) // how many bars 
+// 	.rangeBands([0,height]);
 
 var linearColorScale = d3.scale.linear()
 						.domain([0, data.length])
@@ -81,18 +97,21 @@ function plot(params){
 		//.attr("class","bar") 
 		.classed('bar', true)
 		.classed('foo', true)
-		.attr('x',0) // start at left wall 
+		//.attr('x',0) // start at left wall 
+		.attr('x',function(d,i){
+			return x(d.key); 
+		}) // start at left wall 
 		.attr('y',function(d,i){ // spots along y axis for bars (up to h)
-			
-			return y(d.key);
+			return y(d.value);
+			//return y(d.key);
 		})
 		.attr('width',function(d,i){ // 0 -> 800 scale 
-			return x(d.value); 
+			//return x(d.value); 
+				return x.rangeBand(); 
 		})
-		
 		.attr("height", function(d,i){ // height of each bar 
-			
-			return y.rangeBand() - 1;
+			return height - y(d.value);	
+			//return y.rangeBand() - 1;
 		})
 		.style('fill',function(d,i){
 			return ordinalColorScale(i); //distinct colors
@@ -105,16 +124,22 @@ function plot(params){
 	.enter()
 		.append("text")
 		.classed("bar-label", true)
+		// .attr("x", function(d,i){
+		// 	return x(d.value);
+		// })
 		.attr("x", function(d,i){
-			return x(d.value);
+			return x(d.key) + (x.rangeBand()/2);
 		})
-		.attr('dx', -4)
+		// .attr('dx', -4)
+		.attr("dx",0)
 		.attr('y',function(d,i){ 
-				return y(d.key);
+				return y(d.value); 
+				//return y(d.key);
 		})
-		.attr("dy", function(d,i){
-			return y.rangeBand()/1.5+2;
-		})
+		.attr("dy", -6)
+		// .attr("dy", function(d,i){
+		// 	return y.rangeBand()/1.5+2;
+		// })
 		.text(function(d,i){
 			return d.value;
 		});
