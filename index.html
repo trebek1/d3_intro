@@ -46,9 +46,11 @@ var x = d3.scale.linear() // determines width of bar
 	})]) // domain is values you are mapping 
 	.range([0,width]); // range is final range 
 
-var y = d3.scale.linear() // determines height of bar 
-	.domain([0,data2.length]) // how many bars 
-	.range([0,height]); // height of chart to map to 
+var y = d3.scale.ordinal() // determines height of bar 
+	.domain(data2.map(function(entry){
+		return entry.key; 
+	})) // how many bars 
+	.rangeBands([0,height]);
 
 var svg = d3.select('body');
 
@@ -69,14 +71,14 @@ function plot(params){
 		.attr('x',0) // start at left wall 
 		.attr('y',function(d,i){ // spots along y axis for bars (up to h)
 			
-			return y(i);
+			return y(d.key);
 		})
 		.attr('width',function(d,i){ // 0 -> 800 scale 
 			return x(d.value); 
 		})
 		.attr("height", function(d,i){ // height of each bar 
 			
-			return y(1) -1; 
+			return y.rangeBand() - 1;
 		});
 
 	this.selectAll(".bar-label")
@@ -89,10 +91,10 @@ function plot(params){
 		})
 		.attr('dx', -4)
 		.attr('y',function(d,i){ 
-				return y(i);
+				return y(d.key);
 		})
 		.attr("dy", function(d,i){
-			return y(1)/1.5+2;
+			return y.rangeBand()/1.5+2;
 		})
 		.text(function(d,i){
 			return d.value;
