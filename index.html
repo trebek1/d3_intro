@@ -14,8 +14,8 @@ var w = 800;
 var h = 450; 
 var margin = {
 	top: 20,
-	bottom: 20, 
-	left: 20, 
+	bottom: 40, 
+	left: 80, 
 	right: 20
 }
 var width = w - margin.left - margin.right; 
@@ -55,6 +55,15 @@ var y = d3.scale.ordinal() // determines height of bar
 var linearColorScale = d3.scale.linear()
 						.domain([0, data.length])
 						.range(['#990000', '#ffffbf']);
+var ordinalColorScale = d3.scale.category20(); 
+
+var xAxis = d3.svg.axis()
+	.scale(x)
+	.orient("bottom");
+
+var yAxis = d3.svg.axis()
+	.scale(y)
+	.orient("left")
 
 var svg = d3.select('body');
 
@@ -86,10 +95,11 @@ function plot(params){
 			return y.rangeBand() - 1;
 		})
 		.style('fill',function(d,i){
-			console.log(linearColorScale());
-			return linearColorScale(i);
+			return ordinalColorScale(i); //distinct colors
+			//return linearColorScale(i); // gradient colors 
 		});
 
+		// labels 
 	this.selectAll(".bar-label")
 	.data(params.data)
 	.enter()
@@ -108,6 +118,16 @@ function plot(params){
 		.text(function(d,i){
 			return d.value;
 		});
+
+		this.append('g')
+			.classed("x axis", true)
+			.attr("transform", "translate(" + 0 + "," + height +")")
+			.call(xAxis);
+
+		this.append("g")
+			.classed("y axis", true)
+			.attr("transform", "translate(0,0)")
+			.call(yAxis)
 	}
 plot.call(chart,{
 	data:data2
