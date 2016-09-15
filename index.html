@@ -23,12 +23,31 @@ var height = h - margin.top - margin.bottom;
 
 var data = [132,71,337,93,78,43,20,16,30,8,17,21];
 
+var data2 = [
+	
+	{key: "Glazed", value:132},
+	{key: "Jelly", value:71},
+	{key: "Holes", value:337},
+	{key: "Sprinkles", value:93},
+	{key: "Crumb", value:78},
+	{key: "Chocolate", value:43},
+	{key: "Coconut", value:20},
+	{key: "Cream", value:16},
+	{key: "Cruller", value:30},
+	{key: "Eclair", value:8},
+	{key: "Fritter", value:17},
+	{key: "Bearclaw", value:21}
+
+];
+
 var x = d3.scale.linear() // determines width of bar 
-	.domain([0,d3.max(data)]) // domain is values you are mapping 
+	.domain([0,d3.max(data2, function(d){
+		return d.value; 
+	})]) // domain is values you are mapping 
 	.range([0,width]); // range is final range 
 
 var y = d3.scale.linear() // determines height of bar 
-	.domain([0,data.length]) // how many bars 
+	.domain([0,data2.length]) // how many bars 
 	.range([0,height]); // height of chart to map to 
 
 var svg = d3.select('body');
@@ -53,7 +72,7 @@ function plot(params){
 			return y(i);
 		})
 		.attr('width',function(d,i){ // 0 -> 800 scale 
-			return x(d); 
+			return x(d.value); 
 		})
 		.attr("height", function(d,i){ // height of each bar 
 			
@@ -66,7 +85,7 @@ function plot(params){
 		.append("text")
 		.classed("bar-label", true)
 		.attr("x", function(d,i){
-			return x(d);
+			return x(d.value);
 		})
 		.attr('dx', -4)
 		.attr('y',function(d,i){ 
@@ -76,11 +95,11 @@ function plot(params){
 			return y(1)/1.5+2;
 		})
 		.text(function(d,i){
-			return d;
+			return d.value;
 		});
 	}
 plot.call(chart,{
-	data:data
+	data:data2
 }); 
 
 
