@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Learning D3</title>
+	<link rel="stylesheet" href="main.css">
+	<script  type="text/javascript" src="d3.min.js"></script>
+</head>
+<body>
+<!--Place all DOM elements here -->
+<script>
+//Write your code here
+var w = 800; 
+var h = 450; 
+var data = [132,71,337,93,78,43,20,16,30,8,17,21];
+
+var x = d3.scale.linear() // determines width of bar 
+	.domain([0,d3.max(data)]) // domain is values you are mapping 
+	.range([0,w]); // range is final range 
+
+var y = d3.scale.linear() // determines height of bar 
+	.domain([0,data.length]) // how many bars 
+	.range([0,h]); // height of chart to map to 
+
+var svg = d3.select('body');
+
+svg = svg.append("svg").attr('id','chart').attr("width", w).attr("height", h)
+
+svg.selectAll(".bar") // bar class // place bars on the svg 
+	.data(data)
+	.enter() // add element below until enough are there 
+		.append("rect") 
+		//.attr("class","bar") 
+		.classed('bar', true)
+		.classed('foo', true)
+		.attr('x',0) // start at left wall 
+		.attr('y',function(d,i){ // spots along y axis for bars (up to h)
+			
+			return y(i);
+		})
+		.attr('width',function(d,i){ // 0 -> 800 scale 
+			return x(d); 
+		})
+		.attr("height", function(d,i){ // height of each bar 
+			
+			return y(1) -1; 
+		});
+
+svg.selectAll(".bar-label")
+.data(data)
+.enter()
+	.append("text")
+	.classed("bar-label", true)
+	.attr("x", function(d,i){
+		return x(d);
+	})
+	.attr('dx', -4)
+	.attr('y',function(d,i){ 
+			return y(i);
+	})
+	.attr("dy", function(d,i){
+		return y(1)/1.5+2;
+	})
+	.text(function(d,i){
+		return d;
+	})
+
+</script>	
+</body>
+</html>
