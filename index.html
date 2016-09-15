@@ -52,6 +52,10 @@ var y = d3.scale.ordinal() // determines height of bar
 	})) // how many bars 
 	.rangeBands([0,height]);
 
+var linearColorScale = d3.scale.linear()
+						.domain([0, data.length])
+						.range(['#990000', '#ffffbf']);
+
 var svg = d3.select('body');
 
 svg = svg.append("svg").attr('id','chart').attr("width", w).attr("height", h)
@@ -76,9 +80,14 @@ function plot(params){
 		.attr('width',function(d,i){ // 0 -> 800 scale 
 			return x(d.value); 
 		})
+		
 		.attr("height", function(d,i){ // height of each bar 
 			
 			return y.rangeBand() - 1;
+		})
+		.style('fill',function(d,i){
+			console.log(linearColorScale());
+			return linearColorScale(i);
 		});
 
 	this.selectAll(".bar-label")
